@@ -10,3 +10,6 @@ services:
         value: Production
       - key: DOTNET_RUNNING_IN_CONTAINER
         value: "true"
+      - key: PORT
+        value: 8080
+
