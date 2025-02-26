@@ -40,3 +40,97 @@
 .read-the-docs {
   color: #888;
 }
+
+.app {
+    min-height: 100vh;
+    background-color: #f8fafc;
+}
+
+.app-header {
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-header h1 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.5rem;
+}
+
+.logout-button {
+    padding: 0.5rem 1rem;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+    background-color: #dc2626;
+}
+
+.app-main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.generated-content {
+    margin-top: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.generated-content h2 {
+    margin-top: 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.content-display {
+    background-color: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8fafc;
+    padding: 2rem;
+    text-align: center;
+}
+
+.login-container h1 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+    .app-header {
+        padding: 1rem;
+    }
+
+    .app-main {
+        padding: 1rem;
+    }
+
+    .generated-content {
+        padding: 1rem;
+    }
+}

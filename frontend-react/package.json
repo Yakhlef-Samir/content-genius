@@ -2,7 +2,6 @@
   "name": "frontend-react",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "^1.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -30,6 +30,7 @@
     "globals": "^15.14.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.2.6",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",

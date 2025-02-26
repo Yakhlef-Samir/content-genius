@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "module": "es2020",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "types": ["jest", "node", "@testing-library/jest-dom", "vite/client"],
+    "target": "ES2020",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
+  },
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/__tests__/**/*",
+    "src/**/*.css",
+    "src/types/*.d.ts",
+    "src/vite-env.d.ts",
+    "src/types/global.d.ts"
+  ]
+}

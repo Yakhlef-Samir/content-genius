@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { ContentGenerator } from './components/ContentGenerator/ContentGenerator';
+import { authService } from './services/api';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [generatedContent, setGeneratedContent] = useState<string>('');
+    const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated());
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleContentGeneration = (content: string) => {
+        setGeneratedContent(content);
+    };
+
+    const handleLogout = () => {
+        authService.logout();
+        setIsAuthenticated(false);
+    };
+
+    if (!isAuthenticated) {
+        return (
+            <div className="login-container">
+                <h1>Content Genius</h1>
+                <p>Please log in to continue</p>
+                {/* Add Login component here */}
+            </div>
+        );
+    }
+
+    return (
+        <div className="app">
+            <header className="app-header">
+                <h1>Content Genius</h1>
+                <button onClick={handleLogout} className="logout-button">
+                    Logout
+                </button>
+            </header>
+
+            <main className="app-main">
+                <ContentGenerator onGenerate={handleContentGeneration} />
+
+                {generatedContent && (
+                    <div className="generated-content">
+                        <h2>Generated Content</h2>
+                        <div className="content-display">
+                            {generatedContent}
+                        </div>
+                    </div>
+                )}
+            </main>
+        </div>
+    );
 }
 
-export default App
+export default App;

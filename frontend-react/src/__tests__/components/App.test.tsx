@@ -1,10 +1,16 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import App from '../../App';
+import '@testing-library/jest-dom';
 
-describe('App Component', () => {
-  test('renders app component', () => {
+jest.mock('../../services/api', () => ({
+  authService: {
+    isAuthenticated: jest.fn().mockReturnValue(true)
+  }
+}));
+
+describe('App', () => {
+  it('renders the app with ContentGenerator when authenticated', () => {
     render(<App />);
-    expect(screen).toBeDefined();
+    expect(screen.getByTestId('content-generator')).toBeInTheDocument();
   });
 });
