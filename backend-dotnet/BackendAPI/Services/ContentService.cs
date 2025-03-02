@@ -31,15 +31,7 @@ namespace BackendAPI.Services
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (string.IsNullOrWhiteSpace(request.Prompt))
-            {
-                throw new ArgumentException("Prompt cannot be empty", nameof(request));
-            }
-
-            if (request.MaxTokens <= 0)
-            {
-                throw new ArgumentException("MaxTokens must be greater than 0", nameof(request));
-            }
+            await ValidateRequestAsync(request);
 
             try
             {
@@ -57,10 +49,26 @@ namespace BackendAPI.Services
             }
         }
 
-        public async Task<bool> SaveGeneratedContent(string userId, ContentGenerationResponse content)
+        public Task<bool> SaveGeneratedContent(string userId, ContentGenerationResponse content)
         {
             // Cette méthode sera implémentée plus tard avec la persistance des données
-            return true;
+            return Task.FromResult(true);
+        }
+
+        private async Task ValidateRequestAsync(ContentGenerationRequest request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            if (string.IsNullOrWhiteSpace(request.Prompt))
+                throw new ArgumentException("Prompt cannot be empty", nameof(request));
+
+            if (request.MaxTokens <= 0)
+                throw new ArgumentException("MaxTokens must be positive", "request");
+
+            var hasCredits = await _userService.HasAvailableCreditsAsync(request.UserId);
+            if (!hasCredits)
+                throw new InvalidOperationException("User has insufficient credits");
         }
     }
 }

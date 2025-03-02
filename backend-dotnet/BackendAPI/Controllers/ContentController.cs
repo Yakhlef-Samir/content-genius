@@ -22,71 +22,60 @@ namespace BackendAPI.Controllers
         }
 
         [HttpPost("generate")]
-        public async Task<ActionResult<ContentGenerationResponse>> GenerateContent([FromBody] ContentGenerationRequest request)
+        public async Task<IActionResult> GenerateContent([FromBody] ContentGenerationRequest request)
         {
             try
             {
-                var userId = User.Identity.Name;
-
-                if (!await _userService.HasAvailableCreditsAsync(userId))
-                {
-                    return BadRequest(new { error = "Insufficient credits" });
-                }
-
-                var response = await _contentService.GenerateContentAsync(request);
-                
-                // Déduire les crédits seulement si la génération a réussi
-                if (response.Success)
-                {
-                    await _userService.DeductCreditsAsync(userId);
-                }
-
-                return Ok(response);
+                var result = await _contentService.GenerateContentAsync(request);
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(ex.Message);
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                // Log l'erreur ici
-                return StatusCode(500, new { error = "An unexpected error occurred" });
+                return StatusCode(403, ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An unexpected error occurred");
             }
         }
 
-        [HttpGet("credits")]
-        public async Task<ActionResult<int>> GetCreditsBalance()
+        [HttpGet("credits/{userId}")]
+        public async Task<IActionResult> GetCredits(string userId)
         {
             try
             {
-                var userId = User.Identity.Name;
-                var balance = await _userService.GetCreditsBalanceAsync(userId);
-                return Ok(balance);
+                var credits = await _userService.GetCreditsBalanceAsync(userId);
+                return Ok(new { credits });
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                // Log l'erreur ici
-                return StatusCode(500, new { error = "An unexpected error occurred" });
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An unexpected error occurred");
             }
         }
 
         [HttpPost("credits/add")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> AddCredits(string userId, int amount)
+        public async Task<IActionResult> AddCredits([FromBody] AddCreditsRequest request)
         {
             try
             {
-                await _userService.AddCreditsAsync(userId, amount);
+                await _userService.AddCreditsAsync(request.UserId, request.Amount);
                 return Ok();
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Log l'erreur ici
-                return StatusCode(500, new { error = "An unexpected error occurred" });
+                return StatusCode(500, "An unexpected error occurred");
             }
         }
     }

@@ -10,16 +10,32 @@ namespace BackendAPI.Services
     public class OpenAIService : IOpenAIService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
-        private const string OPENAI_API_URL = "https://api.openai.com/v1/completions";
+        private readonly string _apiEndpoint;
 
-        public OpenAIService(HttpClient httpClient, string apiKey)
+        public OpenAIService(HttpClient httpClient, string apiKey, string apiEndpoint = "https://api.openai.com/v1/completions")
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
+            if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
+            _apiEndpoint = apiEndpoint ?? throw new ArgumentNullException(nameof(apiEndpoint));
             
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
             _httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
+        }
+
+        public async Task<ContentGenerationResponse> GenerateAsync(string prompt, int maxTokens)
+        {
+            var request = new ContentGenerationRequest
+            {
+                Prompt = prompt,
+                MaxTokens = maxTokens
+            };
+            var content = await GenerateContentAsync(request);
+            return new ContentGenerationResponse
+            {
+                Content = content,
+                Success = true,
+                TokensUsed = maxTokens
+            };
         }
 
         public async Task<string> GenerateContentAsync(ContentGenerationRequest request)
@@ -50,7 +66,7 @@ namespace BackendAPI.Services
 
             try
             {
-                var response = await _httpClient.PostAsync(OPENAI_API_URL, requestContent);
+                var response = await _httpClient.PostAsync(_apiEndpoint, requestContent);
                 response.EnsureSuccessStatusCode();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
@@ -72,16 +88,16 @@ namespace BackendAPI.Services
 
     internal class OpenAIResponse
     {
-        public Choice[] Choices { get; set; }
+        public Choice[]? Choices { get; set; }
     }
 
     internal class Choice
     {
-        public Message Message { get; set; }
+        public Message? Message { get; set; }
     }
 
     internal class Message
     {
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }

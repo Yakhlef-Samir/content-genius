@@ -6,16 +6,25 @@ namespace BackendAPI.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private const string EmptyUserIdMessage = "User ID cannot be empty";
 
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
+        public async Task<int> GetRemainingCredits(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException(EmptyUserIdMessage, nameof(userId));
+
+            return await _userRepository.GetUserCreditsAsync(userId);
+        }
+
         public async Task<bool> HasAvailableCreditsAsync(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentException("User ID cannot be empty", nameof(userId));
+                throw new ArgumentException(EmptyUserIdMessage, nameof(userId));
 
             var credits = await _userRepository.GetUserCreditsAsync(userId);
             return credits > 0;
@@ -24,7 +33,7 @@ namespace BackendAPI.Services
         public async Task DeductCreditsAsync(string userId, int amount = 1)
         {
             if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentException("User ID cannot be empty", nameof(userId));
+                throw new ArgumentException(EmptyUserIdMessage, nameof(userId));
 
             if (amount <= 0)
                 throw new ArgumentException("Amount must be positive", nameof(amount));
@@ -40,7 +49,7 @@ namespace BackendAPI.Services
         public async Task AddCreditsAsync(string userId, int amount)
         {
             if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentException("User ID cannot be empty", nameof(userId));
+                throw new ArgumentException(EmptyUserIdMessage, nameof(userId));
 
             if (amount <= 0)
                 throw new ArgumentException("Amount must be positive", nameof(amount));
@@ -51,10 +60,7 @@ namespace BackendAPI.Services
 
         public async Task<int> GetCreditsBalanceAsync(string userId)
         {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentException("User ID cannot be empty", nameof(userId));
-
-            return await _userRepository.GetUserCreditsAsync(userId);
+            return await GetRemainingCredits(userId);
         }
     }
 }
