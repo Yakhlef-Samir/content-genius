@@ -51,7 +51,7 @@ namespace BackendAPI.Services
 
         public Task<bool> SaveGeneratedContent(string userId, ContentGenerationResponse content)
         {
-            // Cette méthode sera implémentée plus tard avec la persistance des données
+            //** Cette méthode sera implémentée plus tard avec la persistance des données
             return Task.FromResult(true);
         }
 
